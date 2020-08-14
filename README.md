@@ -1,9 +1,9 @@
-# fileJSON
+# filesJSON
 Open a json file, read the content into this and write the this's content back to the json file
 
-<pre><code>npm i file-json
+<pre><code>npm i files-json
 
-const FileJSON = require("file-json");</code></pre>
+const { filesJSON, FileJSON } = require("files-json");</code></pre>
 
 <h2>Class FileJSON</h2>
 <h3>fileJSON.write()</h3>
@@ -18,6 +18,8 @@ If number of connections from FileJSON(filepath) to a json file at filepath have
     <li><code>filepath</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type">&lt;string&gt;</a></li>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
 </ul>
+<h2>filesJSON</h2>
+An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the filepath keys and FileJSON instances
 Returns a Promise with a a newly opened fileJSON or an already opened fileJSON.
 <pre><code>const test1 = async () => {
     const monkey1 = await new FileJSON("monkey.json");

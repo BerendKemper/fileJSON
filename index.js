@@ -3,7 +3,7 @@ const fs = require("fs");
 const filesJSON = {};
 const _filepath = new WeakMap();
 const _connections = new WeakMap();
-module.exports = class FileJSON {
+class FileJSON {
     constructor(filepath) {
         return new Promise((resolve, reject) => {
             if (filesJSON[filepath] instanceof FileJSON === false) {
@@ -38,3 +38,4 @@ module.exports = class FileJSON {
         _connections.set(this, number);
     }
 };
+module.exports = Object.freeze({ filesJSON, FileJSON });
