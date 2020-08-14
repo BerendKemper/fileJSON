@@ -1,6 +1,10 @@
 # fileJSON
 Open a json file, read the content into this and write the this's content back to the json file
 
+<pre><code>npm i file-json
+
+const FileJSON = require("file-json");</code></pre>
+
 <h2>Class FileJSON</h2>
 <h3>fileJSON.write()</h3>
 <ul>
