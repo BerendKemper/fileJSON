@@ -1,10 +1,8 @@
 # filesJSON
 Open a json file, read the content into this and write the this's content back to the json file
-
 <pre><code>npm i files-json
 
 const { filesJSON, FileJSON } = require("files-json");</code></pre>
-
 <h2>Class FileJSON</h2>
 <h3>fileJSON.write()</h3>
 <ul>
@@ -13,7 +11,7 @@ const { filesJSON, FileJSON } = require("files-json");</code></pre>
 Returns a Promise and resolves when all data from the fileJSON has been written to the json file at the filepath.
 <h3>fileJSON.close()</h3>
 If number of connections from FileJSON(filepath) to a json file at filepath have reached 0, it will remove reference to this filepath so that it can be garbage collected.
-<h2>new FileJSON(filepath)</h2>
+<h3>new FileJSON(filepath)</h3>
 <ul>
     <li><code>filepath</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type">&lt;string&gt;</a></li>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
