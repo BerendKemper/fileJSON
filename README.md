@@ -19,6 +19,7 @@ If number of connections from FileJSON(filepath) to a json file at filepath have
 <h2>filesJSON</h2>
 An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the filepath keys and FileJSON instances
 Returns a Promise with a a newly opened fileJSON or an already opened fileJSON.
+<h2>Example</h2>
 <pre><code>const test1 = async () => {
     const monkey1 = await new FileJSON("monkey.json");
     monkey1.says = "hoehoehaha";
