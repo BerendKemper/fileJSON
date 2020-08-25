@@ -3,15 +3,15 @@ Open a json file, read the content into this and write the this's content back t
 <pre><code>npm i files-json
 
 const { filesJSON, FileJSON } = require("files-json");</code></pre>
-<h2>Class FileJSON</h2>
-<h3>fileJSON.write()</h3>
+<h2>Class: <code>FileJSON</code></h2>
+<h3><code>fileJSON.write()</code></h3>
 <ul>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
 </ul>
 Returns a Promise and resolves when all data from the fileJSON has been written to the json file at the filepath.
-<h3>fileJSON.close()</h3>
+<h3><code>fileJSON.close()</code></h3>
 If number of connections from FileJSON(filepath) to a json file at filepath have reached 0, it will remove reference to this filepath so that it can be garbage collected.
-<h3>new FileJSON(filepath)</h3>
+<h3><code>new FileJSON(filepath)</code></h3>
 <ul>
     <li><code>filepath</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type">&lt;string&gt;</a></li>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
@@ -19,9 +19,9 @@ If number of connections from FileJSON(filepath) to a json file at filepath have
         <li>Resolves <code>fileJSON</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">&lt;object&gt;</a></li>
     </ul>
 </ul>
-<h2>filesJSON</h2>
-An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the filepath keys and FileJSON instances
-Returns a Promise with a a newly opened fileJSON or an already opened fileJSON.
+Returns a Promise that resolves either the content from the json file parsed into an Object or the Object from an already opened instance of a <code>FileJSON</code>.
+<h2><code>filesJSON</code></h2>
+An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the <code>filepath</code> keys and <code>FileJSON</code> instances
 <h2>Example</h2>
 <pre><code>const test1 = async () => {
     const monkey1 = await new FileJSON("monkey.json");
