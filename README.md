@@ -8,7 +8,7 @@ const { filesJSON, FileJSON } = require("files-json");</code></pre>
 <ul>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
 </ul>
-Returns a Promise and resolves when all data from the fileJSON has been written to the json file at the <code>filepath</code>.
+Returns a Promise and resolves when all data from the instance of the <code>fileJSON</code> has been written to the json file at the <code>filepath</code>.
 <h3><code>fileJSON.close()</code></h3>
 Instances from <code>FileJSON</code> should be closed when done reading and writing to that file. If number of connections from an instance of <code>FileJSON</code> at a specific <code>filepath</code> have reached 0 then that instance will be removed from memory. However, If the instace was not closed it will stay in memory and that will cause the problem that when the json file from that <code>filepath</code> has been changed by another module, externally or manually, those changes have not be synchronised with the Object in memory.
 <h3><code>new FileJSON(filepath)</code></h3>
@@ -21,7 +21,7 @@ Instances from <code>FileJSON</code> should be closed when done reading and writ
 </ul>
 Returns a Promise that resolves either the content from the json file parsed into an Object or the Object from an already opened instance of a <code>FileJSON</code>.
 <h2><code>filesJSON</code></h2>
-An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the <code>filepath</code> keys and <code>FileJSON</code> instances
+An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the <code>filepath</code> keys and <code>FileJSON</code> instances.
 <h2>Example</h2>
 <pre><code>const test1 = async () => {
     const monkey1 = await new FileJSON("monkey.json");
