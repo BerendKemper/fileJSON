@@ -15,6 +15,9 @@ If number of connections from FileJSON(filepath) to a json file at filepath have
 <ul>
     <li><code>filepath</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type">&lt;string&gt;</a></li>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
+    <ul>
+        <li>Resolves <code>fileJSON</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">&lt;object&gt;</a></li>
+    </ul>
 </ul>
 <h2>filesJSON</h2>
 An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the filepath keys and FileJSON instances
@@ -23,10 +26,11 @@ Returns a Promise with a a newly opened fileJSON or an already opened fileJSON.
 <pre><code>const test1 = async () => {
     const monkey1 = await new FileJSON("monkey.json");
     monkey1.says = "hoehoehaha";
-    console.log("test1, monkey1:", monkey1);    // "test1, monkey1: FileJSON { says: 'hoehoehaha' }"
+    console.log("test1, monkey1:", monkey1); /*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
     await monkey1.write();
+    // monkey.json did not exist yet and will be created
     const monkey2 = await new FileJSON("monkey.json");
-    console.log(monkey1 === monkey2);           // true
+    console.log(monkey1 === monkey2); /*------------> true */
     monkey1.close();
     monkey2.close();
     // class FileJSON has removed all references to FileJSON("monkey.json")
@@ -34,7 +38,7 @@ Returns a Promise with a a newly opened fileJSON or an already opened fileJSON.
 };
 const test2 = async () => {
     const monkey3 = await new FileJSON("monkey.json");
-    console.log("test2, monkey3:", monkey3);    // "test2, monkey3: FileJSON { says: 'hoehoehaha' }"
+    console.log("test2, monkey3:", monkey3); /*-----> "test2, monkey3: FileJSON { says: 'hoehoehaha' }" */
     monkey3.close();
 };
 (async function test() {
