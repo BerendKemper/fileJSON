@@ -8,7 +8,7 @@ const { filesJSON, FileJSON } = require("files-json");</code></pre>
 <ul>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
 </ul>
-Returns a Promise and resolves when all data from the fileJSON has been written to the json file at the filepath.
+Returns a Promise and resolves when all data from the fileJSON has been written to the json file at the <code>filepath</code>.
 <h3><code>fileJSON.close()</code></h3>
 Instances from <code>FileJSON</code> should be closed when done reading and writing to that file. If number of connections from an instance of <code>FileJSON</code> at a specific <code>filepath</code> have reached 0 then that instance will be removed from memory. However, If the instace was not closed it will stay in memory and that will cause the problem that when the json file from that <code>filepath</code> has been changed by another module, externally or manually, those changes have not be synchronised with the Object in memory.
 <h3><code>new FileJSON(filepath)</code></h3>
