@@ -42,7 +42,7 @@ Instances from <code>FileJSON</code> should be closed when done reading and writ
 					<code>fileJSON</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">&lt;object&gt;</a>
 				</summary>
 			</details>
-			In case the json file at the <code>filepath</code> exists the content will be passed through <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">JSON.parse()</a> the parsed object will be extended by the <code>FileJSON</code> class and then it becomes the <code>fileJSON</code> passed over by the <code>callback</code>. In case the json file at the <code>filepath</code> was already opened, that <code>fileJSON</code> be be passed over  by the <code>callback</code>. In case the json file did not exist a empty <code>fileJSON</code> will be passed over by the <code>callback</code>.
+			In case the json file at the <code>filepath</code> exists the content will be passed through <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">JSON.parse()</a> and the object created from parsing will be extended by the <code>FileJSON</code> class and then it becomes the <code>fileJSON</code> that passed over by the <code>callback</code>. In case the json file at the <code>filepath</code> was already opened, that <code>fileJSON</code> be be passed over  by the <code>callback</code>. In case the json file did not exist a empty <code>fileJSON</code> will be passed over by the <code>callback</code>.
 		</ul>
 	</details>
 </ul>
