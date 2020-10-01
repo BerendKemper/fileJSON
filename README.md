@@ -28,10 +28,10 @@ const { filesJSON, FileJSON } = require("files-json");
 	<summary>Memory</summary>
 	In case the <code>fileJSON</code> is not closed be aware of abundant memory usage because objects are being stored and not used. When the number of connections to a <code>fileJSON</code> at a particular <code>filepath</code> have reached 0 then the <code>fileJSON</code> will be removed from the internal <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Keyed_collections_Maps_Sets_WeakMaps_WeakSets">Map</a>.
 </details>
-<detils>
+<details>
 	<summary>data-synchronization</summary>
 	If a json file at that particular <code>filepath</code> is actively opened in a <code>fileJSON</code> object and if the content of that json file at that particular <code>filepath</code> had been modified outside of the <code>fileJSON</code> object these modifications do not reflect back to the <code>fileJSON</code> object. Therefore when a <code>fileJSON</code> had not been closed when it was not used anymore data may be out of sync. However if the particular json file is never modified outside of the <code>fileJSON</code> object, there is nothing to worry about.
-</detils>
+</details>
 <h3><code>new FileJSON(filepath, callback)</code></h3>
 <ul>
 	<details>
