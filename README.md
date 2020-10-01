@@ -12,8 +12,7 @@ const { filesJSON, FileJSON } = require("files-json");
 		<summary>
 			<code>callback</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">&lt;Function&gt;</a>
 		</summary>
-	</details>
-	<ul>
+		<ul>
 		<details>
 			<summary>
 				<code>err</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">&lt;Error&gt;</a>
@@ -22,6 +21,7 @@ const { filesJSON, FileJSON } = require("files-json");
 		</details>
 	</ul>
 	The <code>callback</code> will be executed when all content from <code>fileJSON</code> has been written to the json file.
+	</details>
 </ul>
 <h3><code>fileJSON.close()</code></h3>
 Instances from <code>FileJSON</code> should be closed when done reading and writing to that file. If number of connections from an instance of <code>FileJSON</code> at a specific <code>filepath</code> have reached 0 then that instance will be removed from memory. However, If the instace was not closed it will stay in memory and that will cause the problem that when the json file from that <code>filepath</code> has been changed by another module, externally or manually, those changes have not be synchronised with the Object in memory.
