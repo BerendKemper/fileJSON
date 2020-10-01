@@ -19,7 +19,7 @@ PrivateFileJSON.prototype.onRead = function onRead(err, data, callback) {
 PrivateFileJSON.prototype.hasRead = function hasRead() {
 	for (const callback of this.readQueue) {
 		this.connections++;
-		callback(this);
+		callback(this.publuc);
 	}
 	this.readQueue = [];
 };
@@ -45,7 +45,7 @@ class FileJSON {
 			new PrivateFileJSON(filepath, this, () => callback(this));
 		}
 		else
-			_privatefileJSON.get(filesJSON[filepath]).awaitRead(() => callback(this));
+			_privatefileJSON.get(filesJSON[filepath]).awaitRead(callback);
 	}
 	write(callback) {
 		_privatefileJSON.get(this).write(callback);
