@@ -24,7 +24,14 @@ const { filesJSON, FileJSON } = require("files-json");
 	</details>
 </ul>
 <h3><code>fileJSON.close()</code></h3>
-Instances from <code>FileJSON</code> should be closed when done reading and writing to that file. If number of connections from an instance of <code>FileJSON</code> at a specific <code>filepath</code> have reached 0 then that instance will be removed from memory. However, If the instace was not closed it will stay in memory and that will cause the problem that when the json file from that <code>filepath</code> has been changed by another module, externally or manually, those changes have not been reflected with the Object in memory.
+<details>
+	<summary>Memory</summary>
+	In case the <code>fileJSON</code> is not closed be aware of abundant memory usage because objects are being stored and not used. When the number of connections to a <code>fileJSON</code> at a particular <code>filepath</code> have reached 0 then the <code>fileJSON</code> will be removed from the internal <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Keyed_collections_Maps_Sets_WeakMaps_WeakSets">Map</a>.
+</details>
+<detils>
+	<summary>data-synchronization</summary>
+	If a json file at that particular <code>filepath</code> is actively opened in a <code>fileJSON</code> object and if the content of that json file at that particular <code>filepath</code> had been modified outside of the <code>fileJSON</code> object these modifications do not reflect back to the <code>fileJSON</code> object. Therefore when a <code>fileJSON</code> had not been closed when it was not used anymore data may be out of sync. However if the particular json file is never modified outside of the <code>fileJSON</code> object, there is nothing to worry about.
+</detils>
 <h3><code>new FileJSON(filepath, callback)</code></h3>
 <ul>
 	<details>
@@ -49,7 +56,14 @@ Instances from <code>FileJSON</code> should be closed when done reading and writ
 	</details>
 </ul>
 <h2><code>filesJSON</code></h2>
-An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the <code>filepath</code> keys with instances created from <code>new FileJSON()</code>. The <code>filepath</code> and <code>fileJSON</code> will be removed when all connections have been closed.
+<details>
+	<summary>keys</summary>
+	The <code>filepath</code>
+</details>
+<details>
+	<summary>values</summary>
+	The <code>fileJSON</code> created from <code>new FileJSON()</code>.
+</details>
 <h2>Example</h2>
 
 ```javascript
