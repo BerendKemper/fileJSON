@@ -5,13 +5,24 @@ Open a json file, read the content into this and write the this's content back t
 ```javascript
 const { filesJSON, FileJSON } = require("files-json");
 ```
-
 <h2>Class: <code>FileJSON</code></h2>
-<h3><code>fileJSON.write()</code></h3>
+<h3><code>fileJSON.write(callback)</code></h3>
 <ul>
-    <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
+	<details>
+		<summary>
+			<code>callback</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">&lt;Function&gt;</a>
+		</summary>
+	</details>
+	<ul>
+		<details>
+			<summary>
+				<code>err</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">&lt;Error&gt;</a>
+			</summary>
+			The <code>err</code> is <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Null_type">Null</a> or return the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">&lt;Error&gt;</a> generated from <a href="https://nodejs.org/dist/latest-v12.x/docs/api/fs.html#fs_fs_writefile_file_data_options_callback">fs.writeFile()</a>.
+		</details>
+	</ul>
+	The <code>callback</code> will be executed when all content from <code>fileJSON</code> has been written to the json file.
 </ul>
-Returns a Promise and resolves when all data from the instance of the <code>fileJSON</code> has been written to the json file at the <code>filepath</code>.
 <h3><code>fileJSON.close()</code></h3>
 Instances from <code>FileJSON</code> should be closed when done reading and writing to that file. If number of connections from an instance of <code>FileJSON</code> at a specific <code>filepath</code> have reached 0 then that instance will be removed from memory. However, If the instace was not closed it will stay in memory and that will cause the problem that when the json file from that <code>filepath</code> has been changed by another module, externally or manually, those changes have not be synchronised with the Object in memory.
 <h3><code>new FileJSON(filepath)</code></h3>
@@ -19,7 +30,7 @@ Instances from <code>FileJSON</code> should be closed when done reading and writ
     <li><code>filepath</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type">&lt;string&gt;</a></li>
     <li>Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">&lt;Promise&gt;</a></li>
     <ul>
-        <li>Resolves <code>fileJSON</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">&lt;object&gt;</a></li>
+        <li><code>fileJSON</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">&lt;object&gt;</a></li>
     </ul>
 </ul>
 Returns a Promise that resolves either the content from the json file parsed into an Object or the Object from an already opened instance of a <code>FileJSON</code>.
