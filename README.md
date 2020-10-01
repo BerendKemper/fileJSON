@@ -31,6 +31,7 @@ Instances from <code>FileJSON</code> should be closed when done reading and writ
 		<summary>
 			<code>filepath</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type">&lt;string&gt;</a>
 		</summary>
+		The <code>filepath</code> will be added to the <code>filesJSON</code> object. 
 	</details>
 	<details>
 		<summary>
@@ -44,6 +45,7 @@ Instances from <code>FileJSON</code> should be closed when done reading and writ
 				In case the json file at the <code>filepath</code> exists the content will be passed through <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">JSON.parse()</a> and the object created from parsing will be extended by the <code>FileJSON</code> class and then it becomes the <code>fileJSON</code> which is passed over by the <code>callback</code>. In case the json file at the <code>filepath</code> was already opened, that <code>fileJSON</code> be be passed over by the <code>callback</code>. In case the json file did not exist a empty <code>fileJSON</code> will be passed over by the <code>callback</code>.
 			</details>
 		</ul>
+		The callback will be executed when the internal <code>fileJSON</code> has finished creating the <code>fileJSON</code>.
 	</details>
 </ul>
 <h2><code>filesJSON</code></h2>
