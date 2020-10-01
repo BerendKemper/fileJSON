@@ -1,21 +1,21 @@
 {
-    "name": "files-json",
-    "version": "1.0.1",
-    "description": "Open a json file, read the content into this and write the this's content back to the json file",
-    "main": "index.js",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/BerendKemper/fileJSON.git"
-    },
-    "keywords": [],
-    "author": {
-        "name": "Berend Kemper",
-        "email": "berend_kemper@hotmail.com",
-        "npmjs": "https://www.npmjs.com/~burndkemper"
-    },
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/BerendKemper/fileJSON/issues"
-    },
-    "homepage": "https://github.com/BerendKemper/fileJSON#readme"
+	"name": "files-json",
+	"version": "2.0.0",
+	"description": "Open a json file, read the content into this and write the this's content back to the json file",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/BerendKemper/fileJSON.git"
+	},
+	"keywords": [],
+	"author": {
+		"name": "Berend Kemper",
+		"email": "berend_kemper@hotmail.com",
+		"npmjs": "https://www.npmjs.com/~burndkemper"
+	},
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/BerendKemper/fileJSON/issues"
+	},
+	"homepage": "https://github.com/BerendKemper/fileJSON#readme"
 }

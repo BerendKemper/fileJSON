@@ -1,48 +1,57 @@
 "use strict";
 const fs = require("fs");
 const filesJSON = {};
-const _filepath = new Map();
-const _connections = new Map();
-const _hasRead = new Map();
+const _privatefileJSON = new Map();
+function PrivateFileJSON(filepath, publuc, callback) {
+	_privatefileJSON.set(publuc, this);
+	this.filepath = filepath;
+	this.connections = 1;
+	this.publuc = publuc;
+	this.readQueue = [];
+	fs.readFile(filepath, (err, data) => this.onRead(err, data, callback));
+};
+PrivateFileJSON.prototype.onRead = function onRead(err, data, callback) {
+	if (err === null && data.length > 6)
+		Object.assign(this.publuc, Object.assign(JSON.parse(data), this.publuc));
+	callback();
+	this.hasRead();
+};
+PrivateFileJSON.prototype.hasRead = function hasRead() {
+	for (const callback of this.readQueue) {
+		this.connections++;
+		callback(this);
+	}
+	this.readQueue = [];
+};
+PrivateFileJSON.prototype.awaitRead = function awaitRead(callback) {
+	this.readQueue.push(callback);
+};
+PrivateFileJSON.prototype.write = function write(callback) {
+	fs.writeFile(this.filepath, JSON.stringify(this.publuc), err => this.onWrite(err, callback));
+};
+PrivateFileJSON.prototype.onWrite = function onWrite(callback) {
+	err === null ? callback(null) : callback(new Error());
+};
+PrivateFileJSON.prototype.close = function close() {
+	if (--this.connections === 0) {
+		_privatefileJSON.delete(this.publuc);
+		delete (filesJSON[this.filepath]);
+	}
+};
 class FileJSON {
-    constructor(filepath) {
-        const hasRead = new Promise((resolve, reject) => {
-            if (filesJSON[filepath] instanceof FileJSON === false) {
-                filesJSON[filepath] = this;
-                _filepath.set(this, filepath);
-                _connections.set(this, 1);
-                fs.readFile(filepath, (err, data) => {
-                    if (err === null && data.length > 6)
-                        Object.assign(this, Object.assign(JSON.parse(data), this));
-                    resolve(this);
-                });
-            }
-            else {
-                const _this = filesJSON[filepath];
-                let numer = _connections.get(_this);
-                _connections.set(_this, ++numer);
-                resolve(_this);
-            }
-        });
-        console.log(hasRead)
-        _hasRead.set(this, hasRead);
-        return hasRead;
-    }
-    write() {
-        return new Promise((resolve, reject) => _hasRead.get(this).then(() =>
-            fs.writeFile(_filepath.get(this), JSON.stringify(this), err =>
-                err === null ? resolve("done") : reject())));
-    }
-    close() {
-        let number = _connections.get(this);
-        if (--number === 0) {
-            _hasRead.delete(this);
-            _connections.delete(this);
-            delete (filesJSON[_filepath.get(this)]);
-            _filepath.delete(this);
-            return;
-        }
-        _connections.set(this, number);
-    }
+	constructor(filepath, callback) {
+		if (!filesJSON[filepath]) {
+			filesJSON[filepath] = this;
+			new PrivateFileJSON(filepath, this, () => callback(this));
+		}
+		else
+			_privatefileJSON.get(filesJSON[filepath]).awaitRead(() => callback(this));
+	}
+	write(callback) {
+		_privatefileJSON.get(this).write(callback);
+	}
+	close() {
+		_privatefileJSON.get(this).close();
+	}
 };
 module.exports = Object.freeze({ filesJSON, FileJSON });

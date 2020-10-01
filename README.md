@@ -1,8 +1,11 @@
 # filesJSON
 Open a json file, read the content into this and write the this's content back to the json file
-<pre><code>npm i files-json
+<pre><code>npm i files-json</code></pre>
 
-const { filesJSON, FileJSON } = require("files-json");</code></pre>
+```javascript
+const { filesJSON, FileJSON } = require("files-json");
+```
+
 <h2>Class: <code>FileJSON</code></h2>
 <h3><code>fileJSON.write()</code></h3>
 <ul>
@@ -23,7 +26,9 @@ Returns a Promise that resolves either the content from the json file parsed int
 <h2><code>filesJSON</code></h2>
 An <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> containing all the <code>filepath</code> keys and <code>FileJSON</code> instances.
 <h2>Example</h2>
-<pre><code>const test1 = async () => {
+
+```javascript
+const test1 = async () => {
     const monkey1 = await new FileJSON("monkey.json");
     monkey1.says = "hoehoehaha";
     console.log("test1, monkey1:", monkey1); /*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
@@ -45,4 +50,5 @@ const test2 = async () => {
     await test1();
     // all references to the FileJSON("monkey.json") are now gone, it is garbage collected
     await test2();
-})();</code></pre>
+})();
+```
