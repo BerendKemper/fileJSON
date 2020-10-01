@@ -68,7 +68,7 @@ const { filesJSON, FileJSON } = require("files-json");
 
 ```javascript
 const test1 = callback => {
-    new FileJSON("monkey.json", monkey1 => {
+	new FileJSON("monkey.json", monkey1 => {
 		monkey1.says = "hoehoehaha";
 		console.log("test1, monkey1:", monkey1); 
 		/*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
@@ -86,14 +86,14 @@ const test1 = callback => {
 	});
 };
 const test2 = () => {
-    new FileJSON("monkey.json", monkey3 => { // reads data from file
+	new FileJSON("monkey.json", monkey3 => { // reads data from file
 		console.log("test2, monkey3:", monkey3);
 		/*-----> "test2, monkey3: FileJSON { says: 'hoehoehaha' }" */
 		monkey3.close();
 	});
 };
 (function test() {
-    test1(() => {
+	test1(() => {
 		// all references to the FileJSON("monkey.json") are now gone, it is garbage collected
 		test2();
 	});
