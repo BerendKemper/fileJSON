@@ -2,24 +2,24 @@
 const fs = require("fs");
 const filesJSON = {};
 const _privatefileJSON = new Map();
-function PrivateFileJSON(filepath, publuc, callback) {
-	_privatefileJSON.set(publuc, this);
+function PrivateFileJSON(filepath, publicThis, callback) {
+	_privatefileJSON.set(publicThis, this);
 	this.filepath = filepath;
 	this.connections = 1;
-	this.publuc = publuc;
+	this.public = publicThis;
 	this.readQueue = [];
-	fs.readFile(filepath, (err, data) => this.onRead(err, data, callback));
+	fs.readFile(filepath, { encoding: null }, (error, data) => this.onRead(error, data, callback));
 };
-PrivateFileJSON.prototype.onRead = function onRead(err, data, callback) {
-	if (err === null && data.length > 6)
-		Object.assign(this.publuc, Object.assign(JSON.parse(data), this.publuc));
-	callback();
+PrivateFileJSON.prototype.onRead = function onRead(error, data, callback) {
+	if (error === null && data.length > 6)
+		this.public = Object.setPrototypeOf(JSON.parse(data), FileJSON.prototype);
+	callback(this.public);
 	this.hasRead();
 };
 PrivateFileJSON.prototype.hasRead = function hasRead() {
 	for (const callback of this.readQueue) {
 		this.connections++;
-		callback(this.publuc);
+		callback(this.public);
 	}
 	this.readQueue = [];
 };
@@ -27,14 +27,14 @@ PrivateFileJSON.prototype.awaitRead = function awaitRead(callback) {
 	this.readQueue.push(callback);
 };
 PrivateFileJSON.prototype.write = function write(callback) {
-	fs.writeFile(this.filepath, JSON.stringify(this.publuc), err => this.onWrite(err, callback));
+	fs.writeFile(this.filepath, JSON.stringify(this.public), error => this.onWrite(error, callback));
 };
-PrivateFileJSON.prototype.onWrite = function onWrite(callback) {
-	err === null ? callback(null) : callback(new Error());
+PrivateFileJSON.prototype.onWrite = function onWrite(error, callback) {
+	error === null ? callback(null) : callback(error);
 };
 PrivateFileJSON.prototype.close = function close() {
 	if (--this.connections === 0) {
-		_privatefileJSON.delete(this.publuc);
+		_privatefileJSON.delete(this.public);
 		delete (filesJSON[this.filepath]);
 	}
 };
@@ -42,7 +42,7 @@ class FileJSON {
 	constructor(filepath, callback) {
 		if (!filesJSON[filepath]) {
 			filesJSON[filepath] = this;
-			new PrivateFileJSON(filepath, this, () => callback(this));
+			new PrivateFileJSON(filepath, this, callback);
 		}
 		else
 			_privatefileJSON.get(filesJSON[filepath]).awaitRead(callback);
