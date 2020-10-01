@@ -67,27 +67,35 @@ const { filesJSON, FileJSON } = require("files-json");
 <h2>Example</h2>
 
 ```javascript
-const test1 = async () => {
-    const monkey1 = await new FileJSON("monkey.json");
-    monkey1.says = "hoehoehaha";
-    console.log("test1, monkey1:", monkey1); /*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
-    await monkey1.write();
-    // monkey.json did not exist yet and will be created
-    const monkey2 = await new FileJSON("monkey.json");
-    console.log(monkey1 === monkey2); /*------------> true */
-    monkey1.close();
-    monkey2.close();
-    // class FileJSON has removed all references to FileJSON("monkey.json")
-    // However, monkey1 and monkey2 still reference to FileJSON("monkey.json")
+const test1 = callback => {
+    new FileJSON("monkey.json", monkey1 => {
+		monkey1.says = "hoehoehaha";
+		console.log("test1, monkey1:", monkey1); 
+		/*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
+		monkey1.write(() => { // monkey.json did not exist yet and will be created
+			new FileJSON("monkey.json", monkey2 => {
+				console.log(monkey1 === monkey2); /*------------> true */
+				monkey1.close();
+				monkey2.close();
+				// class FileJSON has removed all references to FileJSON("monkey.json")
+				// However, monkey1 and monkey2 within this scope 
+				// still reference to FileJSON("monkey.json")
+				callback();
+			});
+		});
+	});
 };
-const test2 = async () => {
-    const monkey3 = await new FileJSON("monkey.json");
-    console.log("test2, monkey3:", monkey3); /*-----> "test2, monkey3: FileJSON { says: 'hoehoehaha' }" */
-    monkey3.close();
+const test2 = () => {
+    new FileJSON("monkey.json", monkey3 => { // reads data from file
+		console.log("test2, monkey3:", monkey3);
+		/*-----> "test2, monkey3: FileJSON { says: 'hoehoehaha' }" */
+		monkey3.close();
+	});
 };
-(async function test() {
-    await test1();
-    // all references to the FileJSON("monkey.json") are now gone, it is garbage collected
-    await test2();
+(function test() {
+    test1(() => {
+		// all references to the FileJSON("monkey.json") are now gone, it is garbage collected
+		test2();
+	});
 })();
 ```
