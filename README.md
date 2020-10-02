@@ -71,7 +71,7 @@ const test1 = callback => {
 	new FileJSON("monkey.json", monkey1 => {
 		monkey1.says = "hoehoehaha";
 		console.log("test1, monkey1:", monkey1); 
-		/*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
+		// "test1, monkey1: FileJSON { says: 'hoehoehaha' }" 
 		monkey1.write(() => { // monkey.json did not exist yet and will be created
 			new FileJSON("monkey.json", monkey2 => {
 				console.log("monkey1 === monkey2:", monkey1 === monkey2);
@@ -94,7 +94,7 @@ const test1 = callback => {
 const test2 = () => {
 	new FileJSON("monkey.json", monkey3 => { // reads data from file
 		console.log("test2, monkey3:", monkey3);
-		/*-----> "test2, monkey3: FileJSON { says: 'hoehoehaha' }" */
+		// "test2, monkey3: FileJSON { says: 'hoehoehaha' }"
 		monkey3.close();
 	});
 };
