@@ -31,10 +31,7 @@ InternalFileJSON.prototype.awaitRead = function awaitRead(callback) {
 	this.readQueue.push(callback);
 };
 InternalFileJSON.prototype.write = function write(callback) {
-	fs.writeFile(this.filepath, JSON.stringify(this.external), error => this.onWrite(error, callback));
-};
-InternalFileJSON.prototype.onWrite = function onWrite(error, callback) {
-	error === null ? callback(null) : callback(error);
+	fs.writeFile(this.filepath, JSON.stringify(this.external), error => callback(error));
 };
 InternalFileJSON.prototype.close = function close() {
 	if (--this.connections === 0) {
