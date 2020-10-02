@@ -49,7 +49,7 @@ const { filesJSON, FileJSON } = require("files-json");
 				<summary>
 					<code>fileJSON</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">&lt;object&gt;</a>
 				</summary>
-				In case the json file at the <code>filepath</code> exists the content will be passed through <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">JSON.parse()</a> and the object created from parsing will be extended by the <code>FileJSON</code> class and then it becomes the <code>fileJSON</code> which is passed over by the <code>callback</code>. In case the json file at the <code>filepath</code> was already opened, that <code>fileJSON</code> be be passed over by the <code>callback</code>. In case the json file did not exist a empty <code>fileJSON</code> will be passed over by the <code>callback</code>.
+				On reading either the content of a json file will be passed through <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">JSON.parse()</a> or a new empty <code>fileJSON</code> object is created and passed by the <code>callback</code>. In case the json file at the <code>filepath</code> was already opened, that <code>fileJSON</code> will be be passed over by the <code>callback</code>. In case the internal <code>new FileJSON()</code> was still reading and at the same time the same <code>filepath</code> is opened somewhere else as another <code>new FileJSON()</code> the latter will be put into a readQueue and return the same object as the first. 
 			</details>
 		</ul>
 		The callback will be executed when the internal <code>fileJSON</code> has finished creating the <code>fileJSON</code>.
