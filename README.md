@@ -74,15 +74,21 @@ const test1 = callback => {
 		/*-----> "test1, monkey1: FileJSON { says: 'hoehoehaha' }" */
 		monkey1.write(() => { // monkey.json did not exist yet and will be created
 			new FileJSON("monkey.json", monkey2 => {
-				console.log(monkey1 === monkey2); /*------------> true */
+				console.log("monkey1 === monkey2:", monkey1 === monkey2);
 				monkey1.close();
+				console.log(filesJSON);
 				monkey2.close();
+				console.log(filesJSON, "<-- empty, BUT WAIT monkey2-->", monkey2);
 				// class FileJSON has removed all references to FileJSON("monkey.json")
 				// However, monkey1 and monkey2 within this scope 
 				// still reference to FileJSON("monkey.json")
 				callback();
 			});
 		});
+	});
+	new FileJSON("monkey.json", monkey4 => {
+		console.log("this monkey was queued:", monkey4);
+		monkey4.close();
 	});
 };
 const test2 = () => {

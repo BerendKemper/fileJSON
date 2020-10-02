@@ -1,9 +1,10 @@
 "use strict";
 const fs = require("fs");
+const queueToRead = {};
 const filesJSON = {};
 const _internalfileJSON = new Map();
 function InternalFileJSON(filepath, external, callback) {
-	_internalfileJSON.set(external, this);
+	queueToRead[filepath] = callback => this.awaitRead(callback);
 	this.filepath = filepath;
 	this.connections = 1;
 	this.external = external;
@@ -13,16 +14,18 @@ function InternalFileJSON(filepath, external, callback) {
 InternalFileJSON.prototype.onRead = function onRead(error, data, callback) {
 	if (error === null && data.length > 6)
 		this.external = Object.setPrototypeOf(JSON.parse(data), FileJSON.prototype);
+	_internalfileJSON.set(this.external, this);
 	filesJSON[this.filepath] = this.external;
-	callback(this.external);
+	process.nextTick(callback, this.external);
 	this.hasRead();
 };
 InternalFileJSON.prototype.hasRead = function hasRead() {
 	for (const callback of this.readQueue) {
 		this.connections++;
-		callback(this.external);
+		process.nextTick(callback, this.external);
 	}
 	this.readQueue = [];
+	delete (queueToRead[this.filepath]);
 };
 InternalFileJSON.prototype.awaitRead = function awaitRead(callback) {
 	this.readQueue.push(callback);
@@ -41,10 +44,15 @@ InternalFileJSON.prototype.close = function close() {
 };
 class FileJSON {
 	constructor(filepath, callback) {
-		if (!filesJSON[filepath])
+		if (queueToRead[filepath])
+			queueToRead[filepath](callback);
+		else if (!filesJSON[filepath])
 			new InternalFileJSON(filepath, this, callback);
-		else
-			_internalfileJSON.get(filesJSON[filepath]).awaitRead(callback);
+		else {
+			const fileJSON = filesJSON[filepath];
+			_internalfileJSON.get(fileJSON).connections++;
+			callback(fileJSON);
+		}
 	}
 	write(callback) {
 		_internalfileJSON.get(this).write(callback);
