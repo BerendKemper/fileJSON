@@ -4,11 +4,11 @@ const queueToRead = {};
 const filesJSON = {};
 const _internalfileJSON = new Map();
 function InternalFileJSON(filepath, external, callback) {
-	queueToRead[filepath] = callback => this.awaitRead(callback);
-	this.filepath = filepath;
-	this.connections = 1;
-	this.external = external;
 	this.readQueue = [];
+	queueToRead[filepath] = callback => this.readQueue.push(callback);
+	this.filepath = filepath;
+	this.external = external;
+	this.connections = 1;
 	fs.readFile(filepath, { encoding: null }, (error, data) => this.onRead(error, data, callback));
 };
 InternalFileJSON.prototype.onRead = function onRead(error, data, callback) {
@@ -17,18 +17,12 @@ InternalFileJSON.prototype.onRead = function onRead(error, data, callback) {
 	_internalfileJSON.set(this.external, this);
 	filesJSON[this.filepath] = this.external;
 	process.nextTick(callback, this.external);
-	this.hasRead();
-};
-InternalFileJSON.prototype.hasRead = function hasRead() {
-	for (const callback of this.readQueue) {
+	for (const queuedCallback of this.readQueue) {
 		this.connections++;
-		process.nextTick(callback, this.external);
+		process.nextTick(queuedCallback, this.external);
 	}
 	this.readQueue = [];
 	delete (queueToRead[this.filepath]);
-};
-InternalFileJSON.prototype.awaitRead = function awaitRead(callback) {
-	this.readQueue.push(callback);
 };
 InternalFileJSON.prototype.write = function write(callback) {
 	fs.writeFile(this.filepath, JSON.stringify(this.external), error => callback(error));
