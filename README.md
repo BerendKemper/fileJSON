@@ -1,6 +1,5 @@
 # filesJSON
-Open a json file, read the content into this and write the this's content back to the json file
-Version that  uses Promises!
+Open a json file, read the content into this and write the this's content back to the json file. <b>Version that  uses Promises!</b>
 <pre><code>npm i files-json</code></pre>
 
 ```javascript
