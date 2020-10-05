@@ -1,6 +1,6 @@
 {
 	"name": "files-json",
-	"version": "2.0.2",
+	"version": "1.0.3",
 	"description": "Open a json file, read the content into this and write the this's content back to the json file",
 	"main": "index.js",
 	"repository": {
