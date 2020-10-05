@@ -1,49 +1,55 @@
 "use strict";
 const fs = require("fs");
+const queueToRead = {};
 const filesJSON = {};
-const _filepath = new Map();
-const _connections = new Map();
-const _hasRead = new Map();
-class FileJSON {
-	constructor(filepath) {
-		let hasRead;
-		if (filesJSON[filepath] instanceof FileJSON) {
-			const _this = filesJSON[filepath];
-			let number = _connections.get(_this);
-			_connections.set(_this, ++number);
-			hasRead = _hasRead.get(_this);
-		}
-		else {
-			filesJSON[filepath] = this;
-			_filepath.set(this, filepath);
-			_connections.set(this, 1);
-			hasRead = new Promise(resolve => {
-				fs.readFile(filepath, (err, data) => {
-					if (err === null && data.length > 6)
-						Object.assign(this, Object.assign(JSON.parse(data), this));
-					resolve(this);
-				});
-			});
-			_hasRead.set(this, hasRead);
-		}
-		return hasRead;
+const _internalfileJSON = new Map();
+function InternalFileJSON(filepath, external, callback) {
+	this.readQueue = [];
+	queueToRead[filepath] = callback => this.readQueue.push(callback);
+	this.filepath = filepath;
+	this.external = external;
+	this.connections = 1;
+	fs.readFile(filepath, { encoding: null }, (error, data) => this.onRead(error, data, callback));
+};
+InternalFileJSON.prototype.onRead = function onRead(error, data, callback) {
+	if (error === null && data.length > 6)
+		this.external = Object.setPrototypeOf(JSON.parse(data), FileJSON.prototype);
+	_internalfileJSON.set(this.external, this);
+	filesJSON[this.filepath] = this.external;
+	process.nextTick(callback, this.external);
+	for (const queuedCallback of this.readQueue) {
+		this.connections++;
+		process.nextTick(queuedCallback, this.external);
 	}
-
-	write() {
-		return new Promise((resolve, reject) => _hasRead.get(this).then(() =>
-			fs.writeFile(_filepath.get(this), JSON.stringify(this), err =>
-				err === null ? resolve("done") : reject())));
+	this.readQueue = [];
+	delete (queueToRead[this.filepath]);
+};
+InternalFileJSON.prototype.write = function write(callback) {
+	fs.writeFile(this.filepath, JSON.stringify(this.external), error => callback(error));
+};
+InternalFileJSON.prototype.close = function close() {
+	if (--this.connections === 0) {
+		_internalfileJSON.delete(this.external);
+		delete (filesJSON[this.filepath]);
+	}
+};
+class FileJSON {
+	constructor(filepath, callback) {
+		if (queueToRead[filepath])
+			queueToRead[filepath](callback);
+		else if (!filesJSON[filepath])
+			new InternalFileJSON(filepath, this, callback);
+		else {
+			const fileJSON = filesJSON[filepath];
+			_internalfileJSON.get(fileJSON).connections++;
+			callback(fileJSON);
+		}
+	}
+	write(callback) {
+		_internalfileJSON.get(this).write(callback);
 	}
 	close() {
-		let number = _connections.get(this);
-		if (--number === 0) {
-			_hasRead.delete(this);
-			_connections.delete(this);
-			delete (filesJSON[_filepath.get(this)]);
-			_filepath.delete(this);
-			return;
-		}
-		_connections.set(this, number);
+		_internalfileJSON.get(this).close();
 	}
 };
 module.exports = Object.freeze({ filesJSON, FileJSON });
