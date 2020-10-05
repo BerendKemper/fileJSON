@@ -1,58 +1,49 @@
 "use strict";
 const fs = require("fs");
-const queueToRead = {};
 const filesJSON = {};
-const _internalfileJSON = new Map();
-function InternalFileJSON(filepath, external, resolve) {
-	this.readQueue = [];
-	queueToRead[filepath] = resolve => this.readQueue.push(resolve);
-	this.filepath = filepath;
-	this.external = external;
-	this.connections = 1;
-	fs.readFile(filepath, { encoding: null }, (error, data) => this.onRead(error, data, resolve));
-};
-InternalFileJSON.prototype.onRead = function onRead(error, data, resolve) {
-	if (error === null && data.length > 6)
-		this.external = Object.setPrototypeOf(JSON.parse(data), FileJSON.prototype);
-	_internalfileJSON.set(this.external, this);
-	filesJSON[this.filepath] = this.external;
-	process.nextTick(resolve, this.external);
-	for (const queuedResolve of this.readQueue) {
-		this.connections++;
-		process.nextTick(queuedResolve, this.external);
-	}
-	this.readQueue = [];
-	delete (queueToRead[this.filepath]);
-};
-InternalFileJSON.prototype.write = function write(resolve) {
-	fs.writeFile(this.filepath, JSON.stringify(this.external), error => resolve(error));
-};
-InternalFileJSON.prototype.close = function close() {
-	if (--this.connections === 0) {
-		_internalfileJSON.delete(this.external);
-		delete (filesJSON[this.filepath]);
-	}
-};
-InternalFileJSON.get = function get(internal, filepath, resolve) {
-	if (queueToRead[filepath])
-		queueToRead[filepath](resolve);
-	else if (!filesJSON[filepath])
-		new InternalFileJSON(filepath, internal, resolve);
-	else {
-		const fileJSON = filesJSON[filepath];
-		_internalfileJSON.get(fileJSON).connections++;
-		resolve(fileJSON);
-	}
-};
+const _filepath = new Map();
+const _connections = new Map();
+const _hasRead = new Map();
 class FileJSON {
 	constructor(filepath) {
-		return new Promise(resolve => InternalFileJSON.get(this, filepath, resolve));
+		let hasRead;
+		if (filesJSON[filepath] instanceof FileJSON) {
+			const _this = filesJSON[filepath];
+			let number = _connections.get(_this);
+			_connections.set(_this, ++number);
+			hasRead = _hasRead.get(_this);
+		}
+		else {
+			filesJSON[filepath] = this;
+			_filepath.set(this, filepath);
+			_connections.set(this, 1);
+			hasRead = new Promise(resolve => {
+				fs.readFile(filepath, (err, data) => {
+					if (err === null && data.length > 6)
+						Object.assign(this, Object.assign(JSON.parse(data), this));
+					resolve(this);
+				});
+			});
+			_hasRead.set(this, hasRead);
+		}
+		return hasRead;
 	}
+
 	write() {
-		return new Promise(resolve => _internalfileJSON.get(this).write(resolve));
+		return new Promise((resolve, reject) => _hasRead.get(this).then(() =>
+			fs.writeFile(_filepath.get(this), JSON.stringify(this), err =>
+				err === null ? resolve("done") : reject())));
 	}
 	close() {
-		_internalfileJSON.get(this).close();
+		let number = _connections.get(this);
+		if (--number === 0) {
+			_hasRead.delete(this);
+			_connections.delete(this);
+			delete (filesJSON[_filepath.get(this)]);
+			_filepath.delete(this);
+			return;
+		}
+		_connections.set(this, number);
 	}
 };
 module.exports = Object.freeze({ filesJSON, FileJSON });
