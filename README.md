@@ -1,5 +1,5 @@
 # filesJSON
-Open a json file, read the content into this and write the this's content back to the json file. <b>CAUTION: Version that uses callbacks!</b>
+Open a json file, read the content into this and write the this's content back to the json file. <b>CAUTION: Versions 2.^0.0 use callbacks!</b>
 <pre><code>npm i files-json</code></pre>
 
 ```javascript
