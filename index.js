@@ -13,7 +13,7 @@ function InternalFileJSON(filepath, external, callback) {
 };
 InternalFileJSON.prototype.onRead = function onRead(error, data, callback) {
 	if (error === null && data.length > 6)
-		this.external = Object.setPrototypeOf(JSON.parse(data), FileJSON.prototype);
+		this.external = Object.setPrototypeOf(JSON.parse(data), Object.getPrototypeOf(this.external));
 	_internalfileJSON.set(this.external, this);
 	filesJSON[this.filepath] = this.external;
 	process.nextTick(callback, this.external);
@@ -44,12 +44,12 @@ class FileJSON {
 			_internalfileJSON.get(fileJSON).connections++;
 			callback(fileJSON);
 		}
-	}
+	};
 	write(callback) {
 		_internalfileJSON.get(this).write(callback);
-	}
+	};
 	close() {
 		_internalfileJSON.get(this).close();
-	}
+	};
 };
 module.exports = Object.freeze({ filesJSON, FileJSON });
