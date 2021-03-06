@@ -2,54 +2,67 @@
 const fs = require("fs");
 const queueToRead = {};
 const filesJSON = {};
-const _internalfileJSON = new Map();
+const accessKey = Symbol("Internal File JSON");
+const accessError = new Error("The internal file JSON is off limits.");
 function InternalFileJSON(filepath, external, callback) {
 	this.readQueue = [];
+	this.readQueue.push(callback);
 	queueToRead[filepath] = callback => this.readQueue.push(callback);
 	this.filepath = filepath;
 	this.external = external;
-	this.connections = 1;
-	fs.readFile(filepath, { encoding: null }, (error, data) => this.onRead(error, data, callback));
+	this.connections = 0;
+	fs.readFile(filepath, { encoding: null }, (error, data) => this.onRead(error, data));
 };
-InternalFileJSON.prototype.onRead = function onRead(error, data, callback) {
-	if (error === null && data.length > 6)
-		this.external = Object.setPrototypeOf(JSON.parse(data), Object.getPrototypeOf(this.external));
-	_internalfileJSON.set(this.external, this);
-	filesJSON[this.filepath] = this.external;
-	process.nextTick(callback, this.external);
-	for (const queuedCallback of this.readQueue) {
-		this.connections++;
-		process.nextTick(queuedCallback, this.external);
+InternalFileJSON.prototype = {
+	onRead(error, data) {
+		if (error === null && data.length > 2)
+			this.external = Object.setPrototypeOf(JSON.parse(data), Object.getPrototypeOf(this.external));
+		this.external.getInternalFileJSON = key => key === accessKey ? this : accessError;
+		filesJSON[this.filepath] = this.external;
+		for (const queuedCallback of this.readQueue) {
+			this.connections++;
+			process.nextTick(queuedCallback, this.external);
+		}
+		this.readQueue = [];
+		delete (queueToRead[this.filepath]);
+	},
+	write(callback) {
+		if (typeof callback === "function")
+			fs.writeFile(this.filepath, JSON.stringify(this.external), error => callback(error));
+		else
+			return new Promise((resolve, reject) => this.writePromise(resolve, reject));
+	},
+	writePromise(resolve, reject) {
+		fs.writeFile(this.filepath, JSON.stringify(this.external), error => error === null ? resolve(error) : reject(error));
+	},
+	close() {
+		if (--this.connections === 0) {
+			delete (filesJSON[this.filepath]);
+			this.external.getInternalFileJSON = null;
+		}
 	}
-	this.readQueue = [];
-	delete (queueToRead[this.filepath]);
 };
-InternalFileJSON.prototype.write = function write(callback) {
-	fs.writeFile(this.filepath, JSON.stringify(this.external), error => callback(error));
-};
-InternalFileJSON.prototype.close = function close() {
-	if (--this.connections === 0) {
-		_internalfileJSON.delete(this.external);
-		delete (filesJSON[this.filepath]);
-	}
-};
-class FileJSON {
-	constructor(filepath, callback) {
+function FileJSON(filepath, callback) {
+	if (this instanceof FileJSON) {
 		if (queueToRead[filepath])
 			queueToRead[filepath](callback);
 		else if (!filesJSON[filepath])
 			new InternalFileJSON(filepath, this, callback);
 		else {
 			const fileJSON = filesJSON[filepath];
-			_internalfileJSON.get(fileJSON).connections++;
+			fileJSON.getInternalFileJSON(accessKey).connections++;
 			callback(fileJSON);
 		}
-	};
+	}
+	else
+		throw TypeError(`Class constructors cannot be invoked without 'new'`);
+};
+FileJSON.prototype = {
 	write(callback) {
-		_internalfileJSON.get(this).write(callback);
-	};
+		return this.getInternalFileJSON(accessKey).write(callback);
+	},
 	close() {
-		_internalfileJSON.get(this).close();
-	};
+		this.getInternalFileJSON(accessKey).close();
+	}
 };
 module.exports = Object.freeze({ filesJSON, FileJSON });
